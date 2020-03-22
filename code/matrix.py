@@ -9,7 +9,7 @@ import csv
 matrix_size = (2, 2)
 
 
-def dostuff(size):
+def main(size):
     # Float 64
     global matrix_size
     matrix_size = size
@@ -96,9 +96,10 @@ def sumDiffOfMatrixes(m1, m2):
     return np.sum(diff)
 
 
+# This writes return of main to csv files
 with open("data2x2.csv", "a", newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["index", "Posit32 error", "Float32 error"])
     for x in range(100):
-        result = dostuff((2, 2))
+        result = main((2, 2))
         writer.writerow([x, result[0], result[1]])
