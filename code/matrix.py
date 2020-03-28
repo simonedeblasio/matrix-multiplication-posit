@@ -9,6 +9,7 @@ import csv
 matrix_size = (2, 2)
 
 
+
 def main(size):
     # Float 64
     global matrix_size
@@ -42,7 +43,9 @@ def main(size):
     matrixMultiplication(m1posit32, m2posit32, resultposit32, "posit32")
     matrixMultiplication(m1float32, m2float64, resultfloat32, "float32")
 
-    return [sumDiffOfMatrixes(resultposit32, resultfloat64), sumDiffOfMatrixes(resultfloat32, resultfloat64)]
+    return [sumDiffOfMatrixes(resultposit32, resultfloat64), sumDiffOfMatrixes(
+        resultfloat32, resultfloat64
+        )]
 
 
 def convertFromFloat64Matrix(randomMatrix, targetMatrix, floatFormat):
@@ -58,15 +61,23 @@ def convertFromFloat64Matrix(randomMatrix, targetMatrix, floatFormat):
 
 def fillWithZeros(floatFormat):
     if floatFormat == "float64":
-        return [[0 for i in range(matrix_size[0])] for j in range(matrix_size[1])]
+        return [[0 for i in range(matrix_size[0])] for j in range(
+            matrix_size[1]
+            )]
     elif floatFormat == "posit32":
-        return [[sp.posit32(0) for i in range(matrix_size[0])] for j in range(matrix_size[1])] 
+        return [[sp.posit32(0) for i in range(matrix_size[0])] for j in range(
+            matrix_size[1]
+            )]
     elif floatFormat == "float32":
-        return [[sf.float32(0) for i in range(matrix_size[0])] for j in range(matrix_size[1])] 
+        return [[sf.float32(0) for i in range(matrix_size[0])] for j in range(
+            matrix_size[1]
+            )]
 
 
 def fillWithRandom():
-    return [[random.random() for i in range(matrix_size[0])] for j in range(matrix_size[1])] 
+    return [[random.random() for i in range(matrix_size[0])] for j in range(
+        matrix_size[1]
+        )]
 
 
 def matrixMultiplication(m1, m2, result, floatFormat):
@@ -97,9 +108,9 @@ def sumDiffOfMatrixes(m1, m2):
 
 
 # This writes return of main to csv files
-with open("data2x2.csv", "a", newline='') as csvfile:
+with open("data2x2test.csv", "a", newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(["index", "Posit32 error", "Float32 error"])
     for x in range(100):
-        result = main((2, 2))
+        result = main((4, 4))
         writer.writerow([x, result[0], result[1]])
