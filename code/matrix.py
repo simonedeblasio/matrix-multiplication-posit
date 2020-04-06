@@ -3,23 +3,24 @@ import softfloat as sf
 import numpy as np
 import csv
 import sys
+import time
 
 
-def main(size, interval):
+def main(size, interval, posit32, float32, float64):
     # Float 64
     m1float64 = fillWithRandom(interval, size)
     m2float64 = fillWithRandom(interval, size)
-    resultfloat64 = fillWithZerosFloat64(size)
+    resultfloat64 = float64  # fillWithZerosFloat64(size)
 
     # Posit 32
-    m1posit32 = fillWithZerosPosit32(size)
-    m2posit32 = fillWithZerosPosit32(size)
-    resultposit32 = fillWithZerosPosit32(size)
+    m1posit32 = posit32  # fillWithZerosPosit32(size)
+    m2posit32 = m1posit32  # fillWithZerosPosit32(size)
+    resultposit32 = m1posit32  # fillWithZerosPosit32(size)
 
     # Float 32
-    m1float32 = fillWithZerosFloat32(size)
-    m2float32 = fillWithZerosFloat32(size)
-    resultfloat32 = fillWithZerosFloat32(size)
+    m1float32 = float32  # fillWithZerosFloat32(size)
+    m2float32 = m1float32  # fillWithZerosFloat32(size)
+    resultfloat32 = m1float32  # fillWithZerosFloat32(size)
 
     # Convert from random Float 64 to Posit 32
     convertFloat64ToPosit32(m1float64, m1posit32)
@@ -141,9 +142,13 @@ def writeToCsv(interval):
                                 "Random interval"
                             ]
                            )
-            for x in range(1):
+            start_time = time.time()
+            posit32 = fillWithZerosPosit32(pow)
+            float32 = fillWithZerosFloat32(pow)
+            float64 = fillWithZerosFloat64(pow)
+            for x in range(1000):
                 random_interval = float(interval)
-                result = main(pow, random_interval)
+                result = main(pow, random_interval, posit32, float32, float64)
                 writer.writerow(
                                 [
                                     x,
@@ -153,6 +158,7 @@ def writeToCsv(interval):
                                     random_interval
                                 ]
                                )
+            print("--- %s seconds ---" % (time.time() - start_time))
 
 
 writeToCsv(sys.argv[1])
