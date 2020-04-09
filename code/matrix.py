@@ -3,6 +3,7 @@ import softfloat as sf
 import numpy as np
 import csv
 import sys
+import time as time
 
 
 def main(size, interval):
@@ -44,17 +45,17 @@ def main(size, interval):
 
 # Returns a matrix filled with Float64 zeros
 def fillWithZerosFloat64(size):
-    return [[0 for i in range(size)] for j in range(size)]
+    return [[0.0 for i in range(size)] for j in range(size)]
 
 
 # Returns a matrix filled with Posit32 zeros suing softposit
 def fillWithZerosPosit32(size):
-    return [[sp.posit32(0) for i in range(size)] for j in range(size)]
+    return [[sp.posit32(0.0) for i in range(size)] for j in range(size)]
 
 
 # Returns a matrix filled with Float32 zeros suing softfloat
 def fillWithZerosFloat32(size):
-    return [[sf.float32(0) for i in range(size)] for j in range(size)]
+    return [[sf.float32(0.0) for i in range(size)] for j in range(size)]
 
 
 # Returns a matrix filled with random numbers in the interval in Float64
@@ -85,7 +86,7 @@ def matrixMultiplicationFloat64(m1, m2, result):
             # iterate through rows of m2
             for k in range(len(m2)):
                 result[i][j] += m1[i][k] * m2[k][j]
-
+                
 
 # Matrix multiplies m1 x m2 and puts the result in Posit32 the result matrix
 def matrixMultiplicationPosit32(m1, m2, result):
@@ -112,9 +113,17 @@ def sumDiffOfMatrixes(m1, m2):
     diff = fillWithZerosFloat64(len(m1))
     for j in range(len(m1)):
         for i in range(len(m1)):
-            diff[j][i] = abs(m1[j][i] - m2[j][i])
+            diff[j][i] = abs(float(m1[j][i]) - float(m2[j][i]))
 
-    return np.sum(diff)
+    return sumMatrix(diff)
+
+
+def sumMatrix(m1):
+    sum = np.longdouble(0)
+    for j in range(len(m1)):
+        for i in range(len(m1)):
+            sum += m1[j][i]
+    return sum
 
 
 # Writes 1000 rows of results from running the main method
@@ -141,7 +150,8 @@ def writeToCsv(interval):
                                 "Random interval"
                             ]
                            )
-            for x in range(1):
+            start_time = time.time()
+            for x in range(1000):
                 random_interval = float(interval)
                 result = main(pow, random_interval)
                 writer.writerow(
@@ -153,6 +163,7 @@ def writeToCsv(interval):
                                     random_interval
                                 ]
                                )
+            print("--- %s seconds ---" % (time.time() - start_time))
 
 
 writeToCsv(sys.argv[1])
