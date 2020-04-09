@@ -8,6 +8,7 @@ import time
 
 def main(size, interval, posit32, float32, float64):
     # Float 64
+    size = 2
     m1float64 = fillWithRandom(interval, size)
     m2float64 = fillWithRandom(interval, size)
     resultfloat64 = float64  # fillWithZerosFloat64(size)
@@ -39,6 +40,12 @@ def main(size, interval, posit32, float32, float64):
     posit32Difference = sumDiffOfMatrixes(resultposit32, resultfloat64)
     float32Difference = sumDiffOfMatrixes(resultfloat32, resultfloat64)
 
+    print("Result double")
+    print(resultfloat64)
+    print("Result float")
+    print(resultfloat32)
+    print("Result posit")
+    print(resultposit32)
     # Return the difference in an array
     return [posit32Difference, float32Difference]
 
@@ -60,8 +67,10 @@ def fillWithZerosFloat32(size):
 
 # Returns a matrix filled with random numbers in the interval in Float64
 def fillWithRandom(interval, size):
-    return [[np.random.uniform(interval*-1, interval) for i in range(size)]
-            for j in range(size)]
+    return [[10, 5],
+            [3, 2.2]]
+#    return [[np.random.uniform(interval*-1, interval) for i in range(size)]
+#        for j in range(size)]
 
 
 # Converts a Float64 matrix to Posit32 matrix using softposit for casting
@@ -124,41 +133,42 @@ def sumDiffOfMatrixes(m1, m2):
 # Loops through all sizes from 2^0 to 2^8
 # (This function is a bit funny looking due to Flake8)
 def writeToCsv(interval):
-    for i in range(8):
-        pow = 2**i
-        # This writes return of main to csv files
-        with open(
-                 str(interval) + "data" + str(pow) + "x" + str(pow) + ".csv",
-                 "a",
-                 newline=''
-                 ) as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(
-                            [
-                                "index",
-                                "Posit32 error",
-                                "Float32 error",
-                                "Matrix size",
-                                "Random interval"
-                            ]
-                           )
-            start_time = time.time()
-            posit32 = fillWithZerosPosit32(pow)
-            float32 = fillWithZerosFloat32(pow)
-            float64 = fillWithZerosFloat64(pow)
-            for x in range(1000):
-                random_interval = float(interval)
-                result = main(pow, random_interval, posit32, float32, float64)
-                writer.writerow(
-                                [
-                                    x,
-                                    result[0],
-                                    result[1],
-                                    pow,
-                                    random_interval
-                                ]
-                               )
-            print("--- %s seconds ---" % (time.time() - start_time))
+    #for i in range(8):
+    #pow = 2**i
+    pow = 2
+    # This writes return of main to csv files
+    # with open(
+    #          str(interval) + "data" + str(pow) + "x" + str(pow) + ".csv",
+    #          "a",
+    #          newline=''
+    #          ) as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     writer.writerow(
+    #                     [
+    #                         "index",
+    #                         "Posit32 error",
+    #                         "Float32 error",
+    #                         "Matrix size",
+    #                         "Random interval"
+    #                     ]
+    #                    )
+    start_time = time.time()
+    posit32 = fillWithZerosPosit32(pow)
+    float32 = fillWithZerosFloat32(pow)
+    float64 = fillWithZerosFloat64(pow)
+    #for x in range(1000):
+    random_interval = float(interval)
+    result = main(pow, random_interval, posit32, float32, float64)
+    # writer.writerow(
+    #                 [
+    #                     x,
+    #                     result[0],
+    #                     result[1],
+    #                     pow,
+    #                     random_interval
+    #                 ]
+    #                )
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
-writeToCsv(sys.argv[1])
+writeToCsv(0)
