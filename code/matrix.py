@@ -17,6 +17,11 @@ def main(size, interval):
     m2posit32 = fillWithZerosPosit32(size)
     resultposit32 = fillWithZerosPosit32(size)
 
+    # Posit 32 using quire
+    m1quire32 = fillWithZerosPosit32(size)
+    m2quire32 = fillWithZerosPosit32(size)
+    resultquire32 = fillWithZerosPosit32(size)
+
     # Float 32
     m1float32 = fillWithZerosFloat32(size)
     m2float32 = fillWithZerosFloat32(size)
@@ -26,6 +31,10 @@ def main(size, interval):
     convertFloat64ToPosit32(m1float64, m1posit32)
     convertFloat64ToPosit32(m2float64, m2posit32)
 
+    # Convert from random Float 64 to Posit 32 using quire
+    convertFloat64ToPosit32(m1float64, m1quire32)
+    convertFloat64ToPosit32(m2float64, m2quire32)
+
     # Convert from random Float 64 to Float 32
     convertFloat64ToFloat32(m1float64, m1float32)
     convertFloat64ToFloat32(m2float64, m2float32)
@@ -33,14 +42,17 @@ def main(size, interval):
     # Floating point multiplication
     matrixMultiplicationFloat64(m1float64, m2float64, resultfloat64)
     matrixMultiplicationPosit32(m1posit32, m2posit32, resultposit32)
+    matrixMultiplicationQuire32(m1quire32, m2quire32, resultquire32)
     matrixMultiplicationFloat32(m1float32, m2float64, resultfloat32)
 
     # Calculate the difference
     posit32Difference = sumDiffOfMatrixes(resultposit32, resultfloat64)
+    quire32Difference = sumDiffOfMatrixes(resultquire32, resultfloat64)
     float32Difference = sumDiffOfMatrixes(resultfloat32, resultfloat64)
 
     # Return the difference in an array
-    return [posit32Difference, float32Difference]
+    return [posit32Difference, float32Difference, quire32Difference]
+    #return [posit32Difference, float32Difference]
 
 
 # Returns a matrix filled with Float64 zeros
@@ -96,7 +108,21 @@ def matrixMultiplicationPosit32(m1, m2, result):
             # iterate through rows of m2
             for k in range(len(m2)):
                 result[i][j] = result[i][j].fma(m1[i][k], m2[k][j])
+                #result[i][j] += m1[i][k] * m2[k][j]
 
+# Similar to the function above, but uses a "quire" as an accumulator
+# This should be way more exact, but also much slower
+def matrixMultiplicationQuire32(m1, m2, result):
+    q = sp.quire32()
+    for i in range(len(m1)):
+        # iterate through columns of m2
+        for j in range(len(m2[0])):
+            # iterate through rows of m2
+            for k in range(len(m2)):
+                q.qma(m1[i][k],m2[k][j])
+                #result[i][j] += m1[i][k] * m2[k][j]
+            result[i][j] = q.toPosit()
+            q.clr()
 
 # Matrix multiplies m1 x m2 and puts the result in Float32 the result matrix
 def matrixMultiplicationFloat32(m1, m2, result):
@@ -106,23 +132,15 @@ def matrixMultiplicationFloat32(m1, m2, result):
             # iterate through rows of m2
             for k in range(len(m2)):
                 result[i][j] = result[i][j].fma(m1[i][k], m2[k][j])
+                #result[i][j] += m1[i][k] * m2[k][j]
 
 
 # Returns the total difference between each element in the matrices m1 & m2
 def sumDiffOfMatrixes(m1, m2):
-    diff = fillWithZerosFloat64(len(m1))
-    for j in range(len(m1)):
-        for i in range(len(m1)):
-            diff[j][i] = abs(float(m1[j][i]) - float(m2[j][i]))
-
-    return sumMatrix(diff)
-
-
-def sumMatrix(m1):
     sum = np.longdouble(0)
     for j in range(len(m1)):
         for i in range(len(m1)):
-            sum += m1[j][i]
+            sum += abs(float(m1[j][i]-m2[j][i]))
     return sum
 
 
@@ -146,6 +164,7 @@ def writeToCsv(interval):
                                 "index",
                                 "Posit32 error",
                                 "Float32 error",
+                                "Posit32 with quire error",
                                 "Matrix size",
                                 "Random interval"
                             ]
@@ -159,6 +178,7 @@ def writeToCsv(interval):
                                     x,
                                     result[0],
                                     result[1],
+                                    result[2],
                                     pow,
                                     random_interval
                                 ]
