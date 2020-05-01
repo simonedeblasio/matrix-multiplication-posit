@@ -140,7 +140,7 @@ def sumDiffOfMatrixes(m1, m2):
     sum = np.longdouble(0)
     for j in range(len(m1)):
         for i in range(len(m1)):
-            sum += abs(float(m1[j][i]-m2[j][i]))
+            sum += abs(float(m1[j][i])-float(m2[j][i]))
     return sum
 
 
